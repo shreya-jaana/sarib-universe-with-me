@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarib 🖤 Dark Universe</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Georgia', serif;
+  background: linear-gradient(to bottom, #000000, #0b1a3a);
+  color: white;
+  overflow-x: hidden;
+  text-align: center;
+}
+
+/* PASSWORD SCREEN */
+#passwordScreen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+}
+
+input {
+  padding: 12px;
+  margin-top: 15px;
+  background: black;
+  border: 1px solid navy;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  padding: 12px;
+  margin-top: 15px;
+  background: navy;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* MAIN CONTENT */
+section {
+  padding: 40px 20px;
+}
+
+h1 {
+  font-size: 28px;
+  text-shadow: 0 0 10px navy;
+}
+
+#letter {
+  margin-top: 20px;
+  min-height: 150px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* MINI GAME */
+#gameArea {
+  position: relative;
+  height: 250px;
+  border: 1px solid navy;
+  margin-top: 20px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.heart {
+  position: absolute;
+  font-size: 20px;
+}
+
+#player {
+  position: absolute;
+  bottom: 10px;
+  left: 45%;
+  font-size: 28px;
+}
+
+#score {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+/* COUNTDOWN */
+#countdown {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* KISS EFFECT */
+.kiss {
+  font-size: 40px;
+  animation: pop 1s ease-in-out;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="passwordScreen">
+  <h2>Only Sarib can enter 🖤</h2>
+  <p>Hint: The day my universe was born</p>
+  <input type="password" id="password" placeholder="Enter Password">
+  <button onclick="checkPassword()">Enter</button>
+</div>
+
+<div id="mainContent" class="hidden">
+
+<section>
+  <h1>Happy Birthday Sarib 🖤</h1>
+  <p>9 March 2009 — The Day the Universe Got Lucky</p>
+  <button onclick="startLetter()">Open My Heart</button>
+  <div id="letter"></div>
+</section>
+
+<section>
+  <h2>Catch My Love 💕</h2>
+  <div id="gameArea">
+    <div id="player">🖤</div>
+  </div>
+  <div id="score">Score: 0</div>
+</section>
+
+<section>
+  <h2>Until We Meet Again ⏳</h2>
+  <div id="countdown"></div>
+</section>
+
+<section>
+  <button onclick="playMusic()">Play Music 🎵</button>
+  <audio id="bgMusic" loop>
+    <source src="baarishein.mp3" type="audio/mpeg">
+  </audio>
+</section>
+
+<section id="kissSection"></section>
+
+</div>
+
+<script>
+
+// PASSWORD
+function checkPassword() {
+  const pass = document.getElementById("password").value;
+  if(pass === "09032009") {
+    document.getElementById("passwordScreen").style.display = "none";
+    document.getElementById("mainContent").classList.remove("hidden");
+  } else {
+    alert("Wrong password 🖤");
+  }
+}
+
+// TYPEWRITER
+const text = `Sarib...
+
+You are my midnight blue.
+You are my quiet storm.
+Distance cannot weaken what I feel.
+
+I don’t just love you.
+I choose you — every day.
+
+Come closer...
+
+💋`;
+
+let i = 0;
+function startLetter() {
+  const letter = document.getElementById("letter");
+  letter.innerHTML = "";
+  i = 0;
+  function typing() {
+    if(i < text.length) {
+      letter.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typing, 40);
+    } else {
+      document.getElementById("kissSection").innerHTML = '<div class="kiss">💋</div>';
+    }
+  }
+  typing();
+}
+
+// MINI GAME (TOUCH SUPPORT)
+let score = 0;
+const player = document.getElementById("player");
+const gameArea = document.getElementById("gameArea");
+
+gameArea.addEventListener("touchmove", function(e) {
+  let touch = e.touches[0];
+  let rect = gameArea.getBoundingClientRect();
+  player.style.left = (touch.clientX - rect.left - 20) + "px";
+});
+
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+  heart.innerHTML = "❤️";
+  heart.style.left = Math.random() * (gameArea.offsetWidth - 20) + "px";
+  heart.style.top = "0px";
+  gameArea.appendChild(heart);
+
+  let fall = setInterval(() => {
+    heart.style.top = heart.offsetTop + 3 + "px";
+
+    if(heart.offsetTop > 220) {
+      clearInterval(fall);
+      heart.remove();
+    }
+
+    if(
+      heart.offsetTop > 200 &&
+      heart.offsetLeft > player.offsetLeft - 20 &&
+      heart.offsetLeft < player.offsetLeft + 20
+    ) {
+      score++;
+      document.getElementById("score").innerText = "Score: " + score;
+      heart.remove();
+      clearInterval(fall);
+    }
+
+  }, 20);
+}
+
+setInterval(createHeart, 1500);
+
+// COUNTDOWN (Example: 1 Jan 2027)
+const targetDate = new Date("January 1, 2027 00:00:00").getTime();
+setInterval(function() {
+  const now = new Date().getTime();
+  const distance = targetDate - now;
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  document.getElementById("countdown").innerHTML = days + " days left";
+}, 1000);
+
+// MUSIC
+function playMusic() {
+  document.getElementById("bgMusic").play();
+}
+
+</script>
+
+</body>
+</html>
